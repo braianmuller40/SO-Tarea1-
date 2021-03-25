@@ -102,12 +102,7 @@ void Tarea3(void* pvParameters)
   int ledState = LOW;
   
   for (;;)
-  {
-     if(Cont == 30){
-      digitalWrite(13 , LOW);
-      vTaskDelete(NULL);
-      }
-    
+  { 
    if (ledState == LOW) {
       ledState = HIGH;
     } else {
@@ -115,5 +110,9 @@ void Tarea3(void* pvParameters)
   }
    digitalWrite(13 , ledState);
    vTaskDelay(2000/portTICK_PERIOD_MS);
+   
+   if(Cont >= 30){ 
+     vTaskDelete(NULL);
+     }
  }
 }
