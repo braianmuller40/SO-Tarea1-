@@ -89,20 +89,17 @@ void Tarea2()
 
 void Tarea3()
 {
-
+  pinMode(13,OUTPUT);
+  int ledState = LOW;
+  
   for (;;)
   {
-
-    int sensorValue = analogRead(A0);
-
-    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-    {
-   
-      Serial.println(sensorValue);
-
-      xSemaphoreGive( xSerialSemaphore );
-    }
-
-    vTaskDelay(1);
+   if (ledState == LOW) {
+      ledState = HIGH;
+    } else {
+      ledState = LOW;
   }
+    digitalWrite(13 , ledState);
+  vTaskDelay(2000/portTICK_PERIOD_MS);
+ }
 }
