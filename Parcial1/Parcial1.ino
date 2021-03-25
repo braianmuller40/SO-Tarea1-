@@ -60,12 +60,13 @@ int Cont;
 
   for (;;) 
   {
-
   Cont++;
-  Serial.println(Cont);
-  vTaskDelay(1000/portTICK_PERIOD_MS);
-  xSemaphoreGive( xSerialSemaphore );
-   
+    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+    {
+           Serial.println(Cont);
+          xSemaphoreGive( xSerialSemaphore );
+    } 
+    vTaskDelay(1000/portTICK_PERIOD_MS);
   }
 }
 
@@ -75,14 +76,16 @@ void Tarea2()
   for (;;)
   {
 
-    int sensorValue = analogRead(A0);
-
-      xSemaphoreGive( xSerialSemaphore );
-    }
-
-    vTaskDelay(1);
+    int ValorA0 = analogRead(A0);
+    
+     if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+    {     
+          Serial.println(ValorA0);
+          xSemaphoreGive( xSerialSemaphore );
+    } 
+    vTaskDelay(3000/portTICK_PERIOD_MS);
   }
-}
+ }
 
 void Tarea3()
 {
