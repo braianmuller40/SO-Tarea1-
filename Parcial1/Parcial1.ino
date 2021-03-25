@@ -1,11 +1,16 @@
 #include <Arduino_FreeRTOS.h>
 #include <semphr.h>
 
-SemaphoreHandle_t xSerialSemaphore;
+TaskHandle_t Tarea1_Handler;
+TaskHandle_t Tarea2_Handler;
+TaskHandle_t Tarea3_Handler;
 
-void Tarea1();
-void Tarea2();
-void Tarea3();
+SemaphoreHandle_t xSerialSemaphore;
+int Cont;
+
+void Tarea1(void *pvParameters);
+void Tarea2(void *pvParameters);
+void Tarea3(void *pvParameters);
 
 void setup() {
   
@@ -28,7 +33,7 @@ void setup() {
     ,  128  
     ,  NULL
     ,  3  
-    ,  NULL );
+    , &Tarea1_Handler);
 
   xTaskCreate(
     Tarea2
@@ -36,7 +41,7 @@ void setup() {
     ,  128  
     ,  NULL
     ,  2  
-    ,  NULL );
+    , &Tarea2_Handler );
     
   xTaskCreate(
     Tarea3
@@ -44,7 +49,7 @@ void setup() {
     ,  128  
     ,  NULL
     ,  1  
-    ,  NULL );
+    , &Tarea1_Handler);
 
 
 }
@@ -54,28 +59,32 @@ void loop()
   
 }
 
-void Tarea1() 
+void Tarea1(void* pvParameters) 
 {
-int Cont;
 
   for (;;) 
-  {
-  Cont++;
+  {Cont++;
+
+    if(Cont == 10){
+       vTaskSuspend(Tarea2_Handler); 
+      }else if(Cont == 20){
+        vTaskResume(Tarea2_Handler);
+        }
+  
     if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
            Serial.println(Cont);
           xSemaphoreGive( xSerialSemaphore );
-    } 
+    }
     vTaskDelay(1000/portTICK_PERIOD_MS);
   }
 }
 
-void Tarea2()
+void Tarea2(void* pvParameters)
 {
 
   for (;;)
   {
-
     int ValorA0 = analogRead(A0);
     
      if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
@@ -87,19 +96,24 @@ void Tarea2()
   }
  }
 
-void Tarea3()
+void Tarea3(void* pvParameters)
 {
   pinMode(13,OUTPUT);
   int ledState = LOW;
   
   for (;;)
   {
+     if(Cont == 30){
+      digitalWrite(13 , LOW);
+      vTaskDelete(NULL);
+      }
+    
    if (ledState == LOW) {
       ledState = HIGH;
     } else {
       ledState = LOW;
   }
-    digitalWrite(13 , ledState);
-    vTaskDelay(2000/portTICK_PERIOD_MS);
+   digitalWrite(13 , ledState);
+   vTaskDelay(2000/portTICK_PERIOD_MS);
  }
 }
