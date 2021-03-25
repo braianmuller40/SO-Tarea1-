@@ -27,7 +27,7 @@ void setup() {
     ,  "Tarea1"  
     ,  128  
     ,  NULL
-    ,  2  
+    ,  3  
     ,  NULL );
 
   xTaskCreate(
@@ -35,7 +35,7 @@ void setup() {
     ,  "Tarea2"
     ,  128  
     ,  NULL
-    ,  1  
+    ,  2  
     ,  NULL );
     
   xTaskCreate(
@@ -100,6 +100,6 @@ void Tarea3()
       ledState = LOW;
   }
     digitalWrite(13 , ledState);
-  vTaskDelay(2000/portTICK_PERIOD_MS);
+    vTaskDelay(2000/portTICK_PERIOD_MS);
  }
 }
